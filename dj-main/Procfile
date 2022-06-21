@@ -1,1 +1,1 @@
-web: python main.js
+web: python main.py start -p $PORT
