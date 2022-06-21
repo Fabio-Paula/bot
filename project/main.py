@@ -3,7 +3,7 @@ from discord.ext import commands
 import youtube_dl
 import random
 
-
+cogs = [music]
 
 client = commands.Bot(command_prefix='.', intents=discord.Intents.all())
 bot = client.command('.')
