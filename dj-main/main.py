@@ -3,8 +3,8 @@ from discord.ext import commands
 import music
 import random
 import os
-TOKEN = "TOKEN"
-PORT = int(os.environ.get('PORT', '8443'))
+
+os.environ.get('PORT', '8443')
 
 cogs = [music]
 
