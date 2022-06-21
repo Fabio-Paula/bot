@@ -2,6 +2,16 @@ import discord
 from discord.ext import commands
 import music
 import random
+import os
+TOKEN = "TOKEN"
+PORT = int(os.environ.get('PORT', '8443'))
+updater = Updater(TOKEN)
+# add handlers
+updater.start_webhook(listen="0.0.0.0",
+                      port=PORT,
+                      url_path=TOKEN,
+                      webhook_url="https://<appname>.herokuapp.com/" + TOKEN)
+updater.idle()
 
 cogs = [music]
 
