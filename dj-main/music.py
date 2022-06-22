@@ -1,6 +1,10 @@
+from http import client
 import discord
+from discord import FFmpegPCMAudio
+from discord import TextChannel
+from discord.utils import get
 from discord.ext import commands
-import youtube_dl
+from youtube_dl import YoutubeDL
 
 
 class music(commands.Cog):
@@ -18,32 +22,19 @@ class music(commands.Cog):
         else:
             await ctx.voice_client.move_to(voice_channel)
 
-        ctx.voice_client.stop()
+        YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist': 'True'}
+        FFMPEG_OPTIONS = {
+            'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
+        voice = get(client.voice_clients, guild=ctx.guild)
 
-        YDL_OPTIONS = {'format': "bestaudio"}
-        FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
-                          'options': '-vn'}
-        vc = ctx.voice_client
+        if not voice.is_playing():
+            with YoutubeDL(YDL_OPTIONS) as ydl:
+                info = ydl.extract_info(url, download=False)
+            URL = info['url']
+            voice.play(FFmpegPCMAudio(URL, **FFMPEG_OPTIONS))
+            voice.is_playing()
+            await ctx.send('Bot está tocando')
 
-        with youtube_dl.YoutubeDL(YDL_OPTIONS) as ydl:
-            info = ydl.extract_info(url, download=False)
-            url2 = info['formats'][0]['url']
-            source = await discord.FFmpegOpusAudio.from_probe(url2, **FFMPEG_OPTIONS)
-            vc.play(source)
-
-    @commands.command(name='fila')
-    async def queue(self, ctx):
-        retval = ''
-        music_queue = []
-
-        for i in range(0, len(music_queue)):
-            if i > 4: break
-            retval += music_queue[i][0]['titulo'] + '\n'
-
-        if retval != "":
-            await ctx.send(retval)
-        else:
-            await ctx.send('sem música na lista')
 
     @commands.command()
     async def pause(self, ctx):
